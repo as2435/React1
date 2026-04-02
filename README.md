@@ -1,4 +1,4 @@
-#4주차
+# 4주차
 
 ---
 
@@ -174,5 +174,144 @@ export default function Profile () {
 
 * PascalCase: 컴포넌트 이름 (예: MyComponent)
 * camelCase: 속성 및 변수 (예: onClick, className)
+
+---
+
+# 5주차
+
+---
+## JSX로 마크업 작성하기
+
+### 태그 (Tag)
+- HTML과 같은 마크업에서 요소를 표시하는 기호
+- 예: `<div>`, `<li>`
+
+### 엘리먼트 (Element)
+- DOM의 구성 단위 (DOM 노드)
+- 구조: 여는 태그 + 내용 + 닫는 태그
+- 예:
+ ```
+   <p>엘리먼트 설명</p>
+ ```
+
+### 어트리뷰트 (Attribute)
+
+* 태그의 행동을 제어하거나, 엘리먼트에 추가적인 정보 제공
+* `<img>` 태그의 src같은 정적 속성 같은 것
+* 예:
+  ```
+  <img src="image.png" />
+  ```
+
+### 프로퍼티 (Property)
+
+* DOM 객체 내부의 동적 속성
+* JavaScript로 제어 가능
+* 예:
+
+  * 사용자가 input에 입력 → value 프로퍼티 변경
+  * HTML의 value 어트리뷰트는 그대로 유지
+
+---
+
+## JSX에서 자바스크립트 사용하기
+
+### 사용 방법 4가지
+
+1. 문자열 전달 (따옴표)
+2. `{}`로 변수 사용
+3. `{}`로 함수 호출
+4. `{}`로 객체 사용
+
+### 변수 사용
+
+```jsx
+export default function UseJsx () {
+    const name = "React"
+
+    return (
+        <>
+            <h1>Hello, {name}</h1>
+        </>
+    )
+}
+```
+
+### 함수 사용
+
+```jsx
+export default function UseJsx () {
+    const name = "React"
+
+    function formatDate(date){
+        return new Intl.DateTimeFormat(
+            "en-US", { weekday: "long" }
+        ).format(date);
+    }
+
+    return (
+        <>
+            <h1>Hello, {name}</h1>
+            <p>Today is {formatDate(new Date())}</p>
+        </>
+    )
+}
+```
+
+---
+
+## 데이터 전달과 렌더링
+
+### 개요
+
+* React 컴포넌트는 props를 이용해 서로 통신
+* 부모 컴포넌트는 자식 컴포넌트에게 props를 통해 데이터를 전달
+* props는 HTML의 속성과 비슷해 보이지만 객체, 배열, 함수를 포함한 모든 JavaScript 값을 전달 가능
+
+### Props의 데이터 전달
+
+* Props는 부모 컴포넌트가 자식 컴포넌트에게 전달되는 데이터 꾸러미라고 할 수 있음
+* React에서는 props를 통해 JSX 태그에 정보를 전달
+* `<img>`태그에 전달할 수 있는 props는 HTML 표준으로 이미 정의되어 있음
+
+### 컴포넌트에 props 전달하기
+
+#### 부모 컴포넌트
+- 자식 컴포넌트를 자신의 구조 안에 포함 (import 및 호출)
+- 자식에게 props를 통해 데이터 전달
+
+#### 자식 컴포넌트
+- 부모로부터 전달받은 props를 이용해 UI 생성
+- 생성된 결과를 반환
+- 독립적으로 재사용 가능
+
+#### Props의 특징
+
+- 일방통행  
+
+- 읽기 전용  
+
+- 다양한 타입  
+
+### Props의 기본값 지정
+
+* 부모 컴포넌트로부터 전달받은 prop이 없을 때는 기본값을 지정해줄 수 있음  
+* 기본값을 지정할 때는 변수 뒤에 = 과 함께 기본값을 넣어줌  
+* 이 기본값은 prop이 없거나(undefined)로 전달될 때 사용됨
+* {null} 또는 {0}으로 전달된다면, 기본값은 사용되지 않음
+
+### JSX spread 문법으로 props 전달하기
+
+* 모든 props를 한 번에 자식 컴포넌트에 전달하는 방법은 자바스크립트의 spread 문법을 이용
+* 자바스크립트에서 spread 문법은 객체를 펼치는 문법
+* `<User {...props} />` 는 `<User name={props.name} age={props.age} />`과 동일
+
+#### 이 방법은 주로 다음과 같은 경우에 사용
+
+* 전달받은 props 그대로 넘겨줄 때 (Props Forwarding): 부모 컴포넌트가 받은 props를 중간 단계 컴포넌트가 그대로 자식에게 전달할 때 유용
+
+기본 HTML 속성 확장할 때: 버튼 등을 만들 때 onClick, type, disabled 같은 표준 HTML 속성들을 한꺼번에 전달 가능
+
+전달하고자 하는 props의 수가 너무 많을 때: props의 수가 많아서 가독성이 떨어질 때 간결하게 작성 가능
 
 ---
