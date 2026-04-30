@@ -1,5 +1,172 @@
 # 202230209 김태율
 
+# 9주차(04.29)
+
+### UI를 트리 구조로 이해하기
+브라우저와 모바일 플랫폼처럼 React도 React 앱을 구성하는 컴포넌트 간의 관계를 관리하고, 모델링하기 위해 트리 구조를 사용  
+트리는 React 앱에서 데이터가 흐르는 방식과 렌더링 및 앱 크기를 최적화하는 방법을 이해하는 데 유용한 도구  
+
+컴포넌트의 중요한 특징은 다른 컴포넌트들을 중첩해서 또다른 컴포넌트를 구성하는 것  
+컴포넌트를 중첩하면 부모 컴포넌트와 자식 컴포넌트의 개념이 생김
+이때 각 부모 컴포넌트도 또 다른 컴포넌트의 자식이 될 수 있음. 다만 자식 컴포넌트의 자식이 될 수는 없음  
+React 앱을 렌더링할 때, 이 관계를 Render 트리라고 하는 트리로 모델링할 수 있음  
+
+- 트리는 노드로 구성되어 있으며, 각 노드는 컴포넌트를 나타냄  
+- React Render 트리에서 루트 노드는 앱의 Root 컴포넌트  
+- DOM 트리와는 달리 Render 트리는 HTML 태그 없이 React 컴포넌트로만 구성
+
+---
+
+## JSX에 스타일 적용하기
+
+### 일반 CSS
+- style.css 파일을 만들어서 필요한 스타일을 정의한 후 사용할 컴포넌트에서 import
+- 속성의 이름 `class` => `className` 사용
+- 컴포넌트 단위로 관리하기 어렵고, 전역 스코프(global)의 클래스 이름과 충돌 가능성이 있기 때문에 주의
+
+---
+
+### 인라인 스타일
+
+* HTML 에서도 인라인 스타일은 유지보수의 어려움 등의 단점이 있어 자주 사용X
+* 조건부 스타일에만 제한적으로 사용
+* kebab-case가 아닌 camelCase를 사용해야 함
+
+---
+
+### CSS-in-JS
+
+* 자바스크립트 코드 내에서 CSS를 직접 작성, 컴포넌트 단위로 스타일을 관리하는 방법
+* 라이브러리 사용 (styled-components, emotion, JSS 등)
+* 스타일이 컴포넌트 내에 바인딩 되기 때문에 관리와 유지보수 용이
+* props를 기반으로 한 동적(조건부) 스타일링 적용에 매우 편리
+* 고유한 클래스명을 자동으로 생성하여 스타일의 충돌 방지
+
+---
+
+###  CSS 프레임워크
+
+* 일반적으로 프론트엔드 개발에 많이 사용
+* Tailwind CSS(클래스 단위), Bootstrap(컴포넌트 단위), bulma 등 유명한 CSS 프레임워크들이 있음
+* React에서 추천하는 Tailwind CSS는 클래스를 조합하여 스타일을 작성
+* 빠른 개발과 디자인의 일관성을 유지할 수 있다는 장점
+* 클래스를 조합하는 과정에서 클래스 선언이 길어지기 때문에 문서의 가독성이 떨어질 수 있음
+
+---
+
+### CSS Module
+
+* CSS Module은 클래스명을 `_클래스이름_해쉬값`의 형태로 자동 변환하여, 고유한 이름의 로컬 스코프(Local Scope)를 제공하는 기술
+* 스타일의 충돌방지, 유지보수에도 유리
+* 컴포넌트 단위로 스타일링 한다는 것이 가장 큰 특징, 컴포넌트의 재사용에도 유리하게 작용
+
+---
+
+### 사용 방법
+
+#### 파일명
+* `ButtonCom.module.css`형태
+
+#### CSS 작성
+* css의 내용은 일반 css의 작성법을 따름
+* class 선택자로 스타일 선언
+* Tag 선택자를 사용하는 것은 특별한 경우 아니면 권장하지 않음
+* Tag 선택자는 CSS Module 빌드 시에 고유한 이름을 할당 받지 않고 전역으로 사용되기 때문
+
+#### 클래스에 적용
+* import의 변수명은 관행적으로 style을 사용
+* JSX에서는 class 키워드 대신 className 사용
+* class 이름은 객체를 사용할 때처럼 [변수명].[클래스 명]의 형태로 작성
+* class 이름 전체를 중괄호로 감싸줌
+
+
+#### 여러 클래스 적용
+
+```jsx
+<nav className={`${style.navBar} ${style.active}`}></nav>
+```
+
+---
+* ButtonCom.jsx
+```jsx
+import style from "./ButtonCom.module.css"
+
+export default function ButtonCom() {
+    return(
+        <>
+            <h1 className={style.title}>ButtonCom 컴포넌트</h1>
+            <nav className={style.navBar}>
+                <button className={style.myButton}>버튼1</button>
+                <button className={style.myButton}>버튼2</button>
+            </nav>
+        </>
+    )
+}
+```
+* ButtonCom.module.css
+``` css
+.title {
+    font-size: 30px;
+    color: blue;
+}
+
+.navBar {
+    padding: 10px;
+    background-color: #ccc;
+    border: #000 1px solid;
+}
+
+.myButton {
+    margin-right: 10px;
+    background-color: green;
+    border-radius: 25px;
+}
+```
+---
+
+### 이벤트와 상호작용
+
+* 화면을 구성하는 요소 중 사용자의 입력에 반응해 업데이트 되는 요소가 있음
+* 예를 들어 이미지 갤러리에서 특정 이미지를 클릭하면 해당 이미지는 활성 상태가 됨
+* 사용자의 클릭과 같은 특정 입력을 이벤트라고 하고, 이벤트가 발생했을 때 반응하는 로직을 이벤트 핸들러라고 함
+
+#### 응답하기
+* React에서는 JSX 이벤트 핸들러를 추가할 수 있음
+* 이벤트 핸들러는 클릭, 마우스 호버(hover), 폼 입력의 포커스 등 사용자와의 상호작용에 따라 유발되는 사용자 정의 함수
+* <button>과 같은 내장 컴포넌트는 onClick과 같은 내장 브라우저 이벤트만 지원
+* 반면 사용자 정의 컴포넌트의 경우, 이벤트 핸들러 속성에 원하는 애플리케이션별 이름을 지정할 수도 있음
+---
+* ButtonCom.jsx
+``` jsx
+import style from "./ButtonCom.module.css"
+
+function handleClick() {
+    alert("버튼 클릭")
+}
+
+export default function ButtonCom() {
+    return(
+        <>
+            <h1 className={style.title}>ButtonCom 컴포넌트</h1>
+            <nav className={style.navBar}>
+                <button onClick={handleClick} className={style.myButton}>버튼1</button>
+                <button onClick={handleClick} className={style.myButton}>버튼2</button>
+            </nav>
+        </>
+    )
+}
+```
+* 이벤트 핸들러의 이름은 handle로 시작하고 이벤트명을 뒤에 붙이는 것이 관례
+
+#### 이벤트 핸들러 인라인 스타일 정의
+* 이벤트 핸들러는 별도의 함수로 정의하는 것이 일반적이지만 JSX 내에 인라인으로 정의할 수 도 있음
+
+  `<button onClick={() => {alert("버튼 클릭");}} >`
+* 하지만 인라인 스타일의 정의는 함수가 아주 짧을 때만 예외적으로 사용할 것을 권장
+* 가독성이 떨어지고, 재사용 및 모듈화에도 불편함
+
+---
+
 # 7주차(04.15)
 
 ---
