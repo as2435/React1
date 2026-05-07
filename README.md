@@ -1,5 +1,102 @@
 # 202230209 김태율
 
+# 10주차(05.06)
+## 이벤트 핸들러에서 Prop 사용
+* ToolBar.jsx
+``` jsx
+import ButtonCom from "./ButtonCom"
+
+export default function ToolBar() {
+    return(
+        <>
+            <ButtonCom message="버튼1 클릭">
+                버튼1
+            </ButtonCom>
+            <ButtonCom message="버튼2 클릭">
+                버튼2
+            </ButtonCom>
+        </>
+    )
+}
+```
+* ButtonCom.jsx
+``` jsx
+export default function ButtonCom({message, children}) {
+    function handleClick() {
+        alert(message)
+    }
+
+    return(
+        <button onClick={handleClick}>
+            {children}
+        </button>
+    )
+}
+```
+### 이벤트 핸들러를 Prop으로 전달하기
+* 지금까지는 handleClick 이라는 하나의 이벤트 핸들러만 사용
+    > 버튼의 이름과 출력되는 문자열은 다르지만 하나의 로직에 의해서 출력됨
+* 각각의 버튼이 2가지 이상의 기능을 수행해야 한다면 이벤트 핸들러도 2개 이상이 필요하게 됨
+* 구현하는 방법
+  1. 조건문을 사용하여 분기하면 쉽게 구현가능
+  2. 필요한 만큼 Button 컴포넌트를 만들 수 있음
+
+다음과 같은 방법을 사용하면 관리도 쉽고 재사용도 편리한 컴포넌트를 만들 수 있음
+
+1. 버튼 컴포넌트는 출력만 담당
+2. 이벤트 핸들러는 별도의 파일에 모듈의 형태로 모아서 관리
+3. 부모 컴포넌트에서 Button 컴포넌트를 호출할 때 이벤트 핸들러를 함께 전달
+---
+### [실습]
+* ToolBar.jsx
+```jsx
+import ButtonCom from "./ButtonCom";
+import { handlePlay, hadleStop } from "./hadle.jsx";
+import sampleVideo from "../../assets/sample.mp4";
+
+export default function ToolBar() {
+  return (
+    <>
+      <nav>
+        <ButtonCom message="videoPlayer" handle={handlePlay}>
+          Play
+        </ButtonCom>
+        &nbsp;
+        <ButtonCom message="videoPlayer" handle={hadleStop}>
+          Stop
+        </ButtonCom>
+      </nav>
+      <br />
+      <section>
+        <video id="videoPlayer" src={sampleVideo} controls width="350"></video>
+      </section>
+    </>
+  );
+}
+```
+* hadle.jsx
+```jsx
+import ButtonCom from "./ButtonCom";
+export function handleClick({ message }) {
+  alert(message);
+}
+
+export function handlePlay({ message }) {
+  const videoSource = document.getElementById(message);
+  if (videoSource) videoSource.play();
+}
+export function hadleStop({ message }) {
+  const videoSource = document.getElementById(message);
+  if (videoSource) videoSource.play();
+}
+```
+**Note**
+#### document.getElementById(id)
+* HTML 문서에서 고유한 id 속성을 가진 요소를 찾아 JavaScript 객체로 반환하는 메서드
+* id 값을 따옴표로 감싸 매개변수로 전달하며 요소가 없으면 null 반환
+* 주로 HTML의 내용 변경, 스타일 수정 등 DOM 조작에 사용됨
+
+
 # 9주차(04.29)
 
 ### UI를 트리 구조로 이해하기
