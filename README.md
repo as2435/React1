@@ -1,5 +1,139 @@
 # 202230209 김태율
 
+# 11주차(05.13)
+### note
+* HTML의 `<video>`태그는 보통 `<video>..</video>`의 형태로 사용
+* 앞쪽 태그안의 속성 만으로 충분한 설정이 가능한 경우 싱글 태그 사용 가능
+* 그러나 `<source>`, `<track>`, 대체 텍스트 등을 사용해야 하는 경우는 `<video>..</video>`의 형태로 사용할 수도 있음
+* React에서 DOM을 제어할 때는 useRef를 사용하여 엘리먼트를 ref 객체로 관리하는 것이 좋음
+* React에서는 DOM에 직접 접근하는 것을 권장하지 않음
+
+### 실습 정리
+* 이번 실습에서는 Toolbar 컴포넌트에서 Button 컴포넌트를 호출하여, video 엘리먼트의 id와 이벤트 핸들러를 props로 전달
+* Props를 전달받은 Button 컴포넌트는 버튼이 클릭될 때 onClick prop으로 이벤트 핸들러를 전달함
+* 여기서 중요한 것은 단순한 prop의 전달이 아니라 함수, 즉 이벤트 핸들러를 직접 전달했다는 것이 핵심
+* 또 한 가지 Handle.jsx와 같이 특정 함수만 모아 놓은 파일을 모듈
+* Handle과 같이 이벤트 핸들러만 모아 놓으면 Button 컴포넌트와 함께 어떤 프로젝트에서도 재사용이 쉬워짐
+* 이 밖에도 일반적으로 자주 사용하는 로직이 있다면 모듈의 형태로 관리하면 편리하게 사용할 수 있음
+
+## 이벤트의 전파
+### [실습]
+* Bubble.jsx
+``` jsx
+import style from "./Bubble.module.css";
+
+export default function Bubble() {
+  return (
+    <>
+      <h1 className={style.title}>Bubble</h1>
+      <nav className={style.navBar} onClick={() => alert("네비게이션바 클릭!")}>
+        <button className={style.button} onClick={() => alert("버튼1 클릭!")}>
+          버튼1
+        </button>
+        <button className={style.button} onClick={() => alert("버튼2 클릭!")}>
+          버튼2
+        </button>
+      </nav>
+    </>
+  );
+}
+```
+* DOM 트리의 하위에 있는 <button>이 실행되면, 그 이벤트가 DOM 트리의 상위 즉, 부모에게 전달 됨
+
+## 이벤트 전파의 중지
+* 이벤트 핸들러는 이벤트 오브젝트(object)를 유일한 매개 변수로 사용
+* 관례적으로 이벤트 오브젝트를 의미하는 “event”를 “e”로 줄여서 호출하는 것이 일반적
+* 이 오브젝트는 이벤트의 정보를 읽어 들이는데 사용할 수 있음
+* 또한 이벤트 오브젝트가 전파를 멈출 수 있게 해줌
+* 이벤트가 부모 컴포넌트에 닿지 못하도록 막으려면, 다음 예제처럼 Bubble 컴포넌트에 Button 컴포넌트를 추가하고, e.stopPropagation()을 호출하도록 함
+``` jsx
+function Button({ onClick, children }) {
+  return (
+    <button
+      onClick={(e) => {
+        e.stopPropagation();
+        onClick();
+      }}>
+      {children}
+    </button>
+  );
+}
+```
+* 버튼을 클릭하면 다음과 같은 절차
+1. React가 <button>에 전달된 onClick 핸들러를 호출
+2. Button 컴포넌트에 정의된 해당 핸들러는 다음을 수행
+   * e.stopPropagation()을 호출하여 이벤트가 더 이상 bubbling 되지 않도록 방지
+   * Bubble 컴포넌트가 prop으로 전달해 준 onClick 함수를 호출
+3. Bubble 컴포넌트에서 정의된 onClick 이벤트 핸들러 함수가 버튼의 alert를 표시
+4. 전파가 중단되었기 때문에 부모인 <div>의 onClick은 실행되지 않음
+
+event는 SyntheticEvent 클래스의 instance
+### [실습]
+* Bubble.jsx
+``` jsx
+import style from "./Bubble.module.css";
+
+function Button({ onClick, children }) {
+  return (
+    <button
+      className={style.button}
+      onClick={(e) => {
+        e.stopPropagation();
+        onClick();
+      }}
+    >
+      {children}
+    </button>
+  );
+}
+
+export default function Bubble() {
+  return (
+    <>
+      <h1 className={style.title}>Bubble</h1>
+      <nav className={style.navBar} onClick={() => alert("네비게이션바 클릭!")}>
+        <button className={style.button} onClick={() => alert("버튼1 클릭!")}>
+          버튼1
+        </button>
+        <button className={style.button} onClick={() => alert("버튼2 클릭!")}>
+          버튼2
+        </button>
+      </nav>
+    </>
+  );
+}
+```
+---
+### e.stopPropagation()와 e.preventDefault()
+* 전파를 중지하는 데는 둘 다 유용하지만, 전혀 다른 기능을 가지고 있음
+* e.stopPropagation()은 이벤트 핸들러가 상위 태그에서 실행되지 않도록 멈추는 기능
+* 반면 e.preventDefault()는 브라우저 기본 동작을 갖고 있는 일부 이벤트가 해당 기본 동작을 실행하지 않도록 방지하는 기능
+---
+* 이벤트 핸들러는 사이드 이펙트를 위한 최고의 위치
+* 함수를 렌더링하는 것과 다르게 이벤트 핸들러는 순수할 필요가 없기 때문에 무언가를 변경하는데 최적의 위치
+* 예를 들어 타이핑에 반응해 입력 값을 수정하거나, 버튼 클릭에 따라 리스트를 변경할 때 적절함
+* 그러나 일부 정보를 수정하기 위해서는 먼저 그 정보를 저장하기 위한 수단이 필요함
+* 이를 위해서 React에서는 컴포넌트의 정보를 저장하는 역할을 하는 state Hook을 통해 제공
+
+### State의 개념과 useState
+* State는 컴포넌트의 기억장소
+* 컴포넌트는 상호 작용의 결과로 화면의 내용을 변경해야 하는 경우가 많음
+
+* 예를 들면
+    * 폼에 무언가를 입력하면 입력 필드가 업데이트되어야 함
+    * 이미지 캐러셀에서 다음 버튼을 클릭할 때 표시되는 이미지가 변경되어야 함
+    * 또한 구매 버튼을 클릭하면 상품이 장바구니에 담겨야 하는 경우
+* 컴포넌트는 현재 입력 값, 현재 이미지, 장바구니의 상태와 같은 것들을 어딘 가에 기억해야 함
+* React는 이런 종류의 컴포넌트별 메모리를 state라고 부름
+
+### 로컬 변수에 컴포넌트 상태 저장
+* 이번 실습에서는 가장 쉽게 생각할 수 있는 방법으로 캐러셀을 구현
+* 로컬 변수를 이용해서 index값 저장하고, 현재 저장된 index 값의 이미지 정보를 렌더링
+* index값의 결정은 버튼을 이용하고, 클릭 이벤트 핸들러에서 index값을 하나씩 증가시킴
+* 먼저 버튼을 클릭하면 index값이 증가하도록 구현
+* 정상 동작이 확인되면 index 감소버튼을 추가하여 좌우로 슬라이딩 되는 캐러셀을 완성
+
+
 # 10주차(05.06)
 ## 이벤트 핸들러에서 Prop 사용
 * ToolBar.jsx
