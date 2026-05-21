@@ -1,5 +1,112 @@
 # 202230209 김태율
 
+# 12주차(05.20)
+
+* imgData.jsx
+``` jsx
+export const galleryImages = [
+    {
+        name: "slide 1",
+        artist: "Artist 1",
+        description: "placeholder image for slide 1",
+        url: "https://placehold.co/600x400?text=Slide1",
+        alt: "Slide 1",
+    },
+    {
+        name: "slide 2",
+        artist: "Artist 2",
+        description: "placeholder image for slide 2",
+        url: "https://placehold.co/600x400?text=Slide2",
+        alt: "Slide 2",
+    },
+    {
+        name: "slide 3",
+        artist: "Artist 3",
+        description: "placeholder image for slide 3",
+        url: "https://placehold.co/600x400?text=Slide3",
+        alt: "Slide 3",
+    },
+    {
+        name: "slide 4",
+        artist: "Artist 4",
+        description: "placeholder image for slide 4",
+        url: "https://placehold.co/600x400?text=Slide4",
+        alt: "Slide 4",
+    },
+    {
+        name: "slide 5",
+        artist: "Artist 1",
+        description: "placeholder image for slide 5",
+        url: "https://placehold.co/600x400?text=Slide5",
+        alt: "Slide 5",
+    }
+]
+```
+* Carousel.jsx
+``` jsx
+import { galleryImages } from "./imgData.jsx";
+
+export default function Carousel() {
+    let index = 0;
+
+    function handleClick() {
+        index = index + 1;
+        console.log(index);
+    }
+
+    let slide = galleryImages[index];
+    return (
+        <>
+            <button onClick={handleClick}>Next</button>
+            <h2>
+                <i>{slide.name} </i>
+                by {slide.artist}
+            </h2>
+            <h3>
+                ({index + 1} of {galleryImages.length})
+            </h3>
+            <img src={slide.url} alt={slide.alt} />
+            <p>{slide.description}</p> 
+        </>
+    )
+}
+```
+
+---
+
+### state Hook에 컴포넌트 상태 저장
+* imgData.jsx
+``` jsx
+import { useState } from "react";
+import { galleryImages  } from "./imgData.jsx";
+
+export default function Carousel() {
+    const [index, setIndex] = useState(0);
+
+    function handleClick() {
+        setIndex(index + 1);
+        console.log(index);
+    }
+
+    let slide = galleryImages[index];
+    return (
+        <>
+            <button onClick={handleClick}>Next</button>
+            <h2>
+                <i>{slide.name}</i>
+                by {slide.artist}
+            </h2>
+            <h3>
+                ({index + 1} of {galleryImages.length})
+            </h3>
+            <img src={slide.url} alt={slide.alt} />
+            <p>{slide.description}</p> 
+        </>
+    )
+}
+```
+
+
 # 11주차(05.13)
 ### note
 * HTML의 `<video>`태그는 보통 `<video>..</video>`의 형태로 사용
